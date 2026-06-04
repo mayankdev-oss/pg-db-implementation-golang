@@ -9,6 +9,7 @@ import (
 )
 
 type sensordata struct {
+	ID         int
 	Devicename string
 	Temprature float64
 	IsActive   bool
@@ -31,8 +32,17 @@ func main() {
 	fmt.Printf("The id of newly inserted data is: %d\n", id)
 
 	data := getSensorDataByID(db, id)
-	fmt.Printf("Pura data: %v\n", data)
+	fmt.Printf("Pura data: %v\n", data) // %v format mai struct ka data field ka name automatically print krdega
 
+	allsensors, errr := getAllsensordata(db)
+	if errr != nil {
+		log.Fatal("Data laane me error: ", errr)
+	}
+	fmt.Println("\\\\\\\\\\\\Printintg the data we received\\\\\\\\")
+	for index, value := range allsensors {
+		fmt.Printf("index\n", index+1)
+		fmt.Printf("The data: %v\n", value)
+	}
 }
 
 func createTable(db *sql.DB) { //here i learned that when a string is breaked into multi-line we use smthng like ``
@@ -73,4 +83,26 @@ func getSensorDataByID(db *sql.DB, id int) sensordata {
 		log.Print("there's an error", err)
 	}
 	return data
+}
+
+func getAllsensordata(db *sql.DB) ([]sensordata, error) {
+
+	query := `SELECT id, devicename, temperature, isactive FROM sensordata;`
+	rows, err := db.Query(query)
+	if err != nil {
+		log.Fatal("the error is: \n", err)
+
+	}
+	defer rows.Close()
+	var allData []sensordata
+	for rows.Next() {
+		var u sensordata
+		err := rows.Scan(&u.ID, &u.Devicename, &u.Temprature, &u.IsActive)
+		if err != nil {
+			log.Fatal("scan error: %w", err)
+		}
+		allData = append(allData, u)
+
+	}
+	return allData, err
 }
