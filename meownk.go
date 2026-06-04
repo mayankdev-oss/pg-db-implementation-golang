@@ -40,8 +40,8 @@ func main() {
 	}
 	fmt.Println("\\\\\\\\\\\\Printintg the data we received\\\\\\\\")
 	for index, value := range allsensors {
-		fmt.Printf("index\n", index+1)
-		fmt.Printf("The data: %v\n", value)
+		fmt.Printf("index:%d, \n", index+1)
+		fmt.Printf("The data: %v, \n", value)
 	}
 }
 
